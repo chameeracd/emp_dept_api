@@ -3,74 +3,90 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Employee;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
+use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\View\View;
+use FOS\RestBundle\Controller\Annotations\QueryParam;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
  * Employee controller.
  *
  * @Route("employee")
  */
-class EmployeeController extends Controller
+class EmployeeController extends FOSRestController
 {
     /**
-     * Lists all employee entities.
+     * Lists employees of certain department.
+     *
+     * @QueryParam(name="department_id", requirements="\d+", default="1", description="department id.")
+     * @ApiDoc()
      *
      * @Route("/", name="employee_index")
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $employees = $em->getRepository('AppBundle:Employee')->findAll();
+        $employees = array();
+        if($request->get('department_id') != '') {
+            $employees = $em->getRepository('AppBundle:Employee')->findByDepartment($request->get('department_id'));
+        } else {
+            $employees = $em->getRepository('AppBundle:Employee')->findAll();
+        }
 
-        return $this->render('employee/index.html.twig', array(
-            'employees' => $employees,
-        ));
+        $view = $this->view($employees, 200);
+
+        return $this->handleView($view);
     }
 
     /**
-     * Creates a new employee entity.
+     * Creates a new employee.
      *
-     * @Route("/new", name="employee_new")
-     * @Method({"GET", "POST"})
+     * @ApiDoc(
+     *  resource=true,
+     *  description="Create a new employee",
+     *  output="AppBundle\Entity\Employee"
+     * )
+     *
+     * @Route("/", name="employee_new")
+     * @Method({"POST"})
      */
     public function newAction(Request $request)
     {
         $employee = new Employee();
         $form = $this->createForm('AppBundle\Form\EmployeeType', $employee);
         $form->handleRequest($request);
+        $view = new View($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($employee);
             $em->flush();
 
-            return $this->redirectToRoute('employee_show', array('id' => $employee->getId()));
+            $view = $this->view($employee, 200);
+
+            return $this->handleView($view);
         }
 
-        return $this->render('employee/new.html.twig', array(
-            'employee' => $employee,
-            'form' => $form->createView(),
-        ));
+        return $this->get('fos_rest.view_handler')->handle($view);
     }
 
     /**
      * Finds and displays a employee entity.
      *
+     * @ApiDoc()
      * @Route("/{id}", name="employee_show")
      * @Method("GET")
      */
     public function showAction(Employee $employee)
     {
-        $deleteForm = $this->createDeleteForm($employee);
+        $view = $this->view($employee, 200);
 
-        return $this->render('employee/show.html.twig', array(
-            'employee' => $employee,
-            'delete_form' => $deleteForm->createView(),
-        ));
+        return $this->handleView($view);
     }
 
     /**
