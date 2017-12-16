@@ -226,5 +226,9 @@ class Department
     {
         return $this->parent;
     }
+
+    public function __toString() {
+        return $this->title;
+    }
 }
 

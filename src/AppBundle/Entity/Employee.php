@@ -99,5 +99,29 @@ class Employee
     {
         return $this->address;
     }
+
+    /**
+     * Set department
+     *
+     * @param Department $department
+     *
+     * @return Employee
+     */
+    public function setDepartment(Department $department)
+    {
+        $this->department = $department;
+
+        return $this;
+    }
+
+    /**
+     * Get department
+     *
+     * @return Department
+     */
+    public function getDepartment()
+    {
+        return $this->department;
+    }
 }
 

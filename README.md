@@ -17,7 +17,7 @@ execute the following command(s)
 change `app/config/paramaters.yml` for database config
 
     php app/console doctrine:database:create
-    php app/console doctrine:schema:update
+    php app/console doctrine:schema:update --force
 
 
 ## Running the Tests

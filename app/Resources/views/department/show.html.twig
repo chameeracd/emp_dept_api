@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Department</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ department.id }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ department.title }}</td>
+            </tr>
+            <tr>
+                <th>Lft</th>
+                <td>{{ department.lft }}</td>
+            </tr>
+            <tr>
+                <th>Lvl</th>
+                <td>{{ department.lvl }}</td>
+            </tr>
+            <tr>
+                <th>Rgt</th>
+                <td>{{ department.rgt }}</td>
+            </tr>
+            <tr>
+                <th>Root</th>
+                <td>{{ department.root }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('department_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('department_edit', { 'id': department.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}
