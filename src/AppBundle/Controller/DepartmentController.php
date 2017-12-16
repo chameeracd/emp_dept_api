@@ -5,7 +5,8 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Department;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Department controller.
@@ -24,10 +25,26 @@ class DepartmentController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $departments = $em->getRepository('AppBundle:Department')->findAll();
+        $repo = $em->getRepository('AppBundle:Department');
+        $controller = $this;
+        $options = array(
+            'decorate' => true,
+            'rootOpen' => '<ul>',
+            'rootClose' => '</ul>',
+            'childOpen' => '<li>',
+            'childClose' => '</li>',
+            'nodeDecorator' => function ($node) use (&$controller) {
+                return '<a href="' . $controller->generateUrl('department_show', array('id' => $node['id'])) . '">' . $node['title'] . '</a>&nbsp;';
+            }
+        );
+        $htmlTree = $repo->childrenHierarchy(
+            null, /* starting from root nodes */
+            false, /* true: load all children, false: only direct */
+            $options
+        );
 
         return $this->render('department/index.html.twig', array(
-            'departments' => $departments,
+            'departments' => $htmlTree,
         ));
     }
 
@@ -74,6 +91,21 @@ class DepartmentController extends Controller
     }
 
     /**
+     * Creates a form to delete a department entity.
+     *
+     * @param Department $department The department entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createDeleteForm(Department $department)
+    {
+        return $this->createFormBuilder()
+            ->setAction($this->generateUrl('department_delete', array('id' => $department->getId())))
+            ->setMethod('DELETE')
+            ->getForm();
+    }
+
+    /**
      * Displays a form to edit an existing department entity.
      *
      * @Route("/{id}/edit", name="department_edit")
@@ -116,21 +148,5 @@ class DepartmentController extends Controller
         }
 
         return $this->redirectToRoute('department_index');
-    }
-
-    /**
-     * Creates a form to delete a department entity.
-     *
-     * @param Department $department The department entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(Department $department)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('department_delete', array('id' => $department->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
     }
 }

@@ -3,41 +3,7 @@
 {% block body %}
     <h1>Departments list</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Lft</th>
-                <th>Lvl</th>
-                <th>Rgt</th>
-                <th>Root</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for department in departments %}
-            <tr>
-                <td><a href="{{ path('department_show', { 'id': department.id }) }}">{{ department.id }}</a></td>
-                <td>{{ department.title }}</td>
-                <td>{{ department.lft }}</td>
-                <td>{{ department.lvl }}</td>
-                <td>{{ department.rgt }}</td>
-                <td>{{ department.root }}</td>
-                <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('department_show', { 'id': department.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('department_edit', { 'id': department.id }) }}">edit</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {{ departments | raw }}
 
     <ul>
         <li>
