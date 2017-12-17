@@ -16,7 +16,7 @@ execute the following command(s)
     php app/console cache:clear
     php app/console cache:clear --env=prod
     
-change `app/config/paramaters.yml` for database config
+change `app/config/paramaters.yml` for database config (if you missed in `composer update`)
 
     php app/console doctrine:database:create
     php app/console doctrine:schema:update --force

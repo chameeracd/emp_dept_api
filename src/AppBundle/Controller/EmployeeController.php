@@ -77,7 +77,7 @@ class EmployeeController extends FOSRestController
     }
 
     /**
-     * Finds and displays a employee entity.
+     * Finds and displays a employee.
      *
      * @ApiDoc()
      * @Route("/{id}", name="employee_show")
