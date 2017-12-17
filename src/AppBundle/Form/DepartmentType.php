@@ -13,7 +13,7 @@ class DepartmentType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('title')->add('lft')->add('lvl')->add('rgt')->add('root')->add('parent');
+        $builder->add('title')->add('parent');
     }/**
      * {@inheritdoc}
      */
@@ -29,7 +29,7 @@ class DepartmentType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'appbundle_department';
+        return 'department';
     }
 
 

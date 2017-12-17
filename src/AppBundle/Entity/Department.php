@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Department
@@ -32,6 +33,8 @@ class Department
      *
      * @ORM\Column(name="title", type="string", length=255)
      * @JMS\Expose
+     * @Assert\NotBlank()
+     * @Assert\Length(min=2,max=255)
      */
     private $title;
 

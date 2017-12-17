@@ -49,6 +49,7 @@ class EmployeeController extends FOSRestController
      * @ApiDoc(
      *  resource=true,
      *  description="Create a new employee",
+     *  input="AppBundle\Form\EmployeeType",
      *  output="AppBundle\Entity\Employee"
      * )
      *

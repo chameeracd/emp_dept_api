@@ -3,20 +3,25 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Department;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\View\View;
+use FOS\RestBundle\Controller\Annotations\QueryParam;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
  * Department controller.
  *
  * @Route("department")
  */
-class DepartmentController extends Controller
+class DepartmentController extends FOSRestController
 {
     /**
      * Lists all department entities.
+     *
+     * @ApiDoc()
      *
      * @Route("/", name="department_index")
      * @Method("GET")
@@ -26,52 +31,44 @@ class DepartmentController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $repo = $em->getRepository('AppBundle:Department');
-        $controller = $this;
-        $options = array(
-            'decorate' => true,
-            'rootOpen' => '<ul>',
-            'rootClose' => '</ul>',
-            'childOpen' => '<li>',
-            'childClose' => '</li>',
-            'nodeDecorator' => function ($node) use (&$controller) {
-                return '<a href="' . $controller->generateUrl('department_show', array('id' => $node['id'])) . '">' . $node['title'] . '</a>&nbsp;';
-            }
-        );
-        $htmlTree = $repo->childrenHierarchy(
-            null, /* starting from root nodes */
-            false, /* true: load all children, false: only direct */
-            $options
-        );
+        $arrayTree = $repo->childrenHierarchy();
 
-        return $this->render('department/index.html.twig', array(
-            'departments' => $htmlTree,
-        ));
+        $view = $this->view($arrayTree, 200);
+
+        return $this->handleView($view);
     }
 
     /**
-     * Creates a new department entity.
+     * Creates a new department.
      *
-     * @Route("/new", name="department_new")
-     * @Method({"GET", "POST"})
+     * @ApiDoc(
+     *  resource=true,
+     *  description="Create a new department",
+     *  input="AppBundle\Form\DepartmentType",
+     *  output="AppBundle\Entity\Department"
+     * )
+     *
+     * @Route("/", name="department_new")
+     * @Method("POST")
      */
     public function newAction(Request $request)
     {
         $department = new Department();
         $form = $this->createForm('AppBundle\Form\DepartmentType', $department);
         $form->handleRequest($request);
+        $view = new View($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($department);
             $em->flush();
 
-            return $this->redirectToRoute('department_show', array('id' => $department->getId()));
+            $view = $this->view($department, 200);
+
+            return $this->handleView($view);
         }
 
-        return $this->render('department/new.html.twig', array(
-            'department' => $department,
-            'form' => $form->createView(),
-        ));
+        return $this->get('fos_rest.view_handler')->handle($view);
     }
 
     /**

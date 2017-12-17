@@ -29,7 +29,7 @@ class EmployeeType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'appbundle_employee';
+        return 'employee';
     }
 
 
