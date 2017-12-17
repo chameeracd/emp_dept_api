@@ -12,7 +12,9 @@ execute the following command(s)
     cd emp_dept_api
     composer update
     php app/console assets:install
+    php app/console assets:install --env=prod
     php app/console cache:clear
+    php app/console cache:clear --env=prod
     
 change `app/config/paramaters.yml` for database config
 
@@ -20,6 +22,6 @@ change `app/config/paramaters.yml` for database config
     php app/console doctrine:schema:update --force
 
 
-## Running the Tests
+## Usage
 
-    ./phpunit
+    please refere http://<web-root>/emp_dept_api/web/api/doc
